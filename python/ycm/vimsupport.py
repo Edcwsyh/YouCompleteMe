@@ -529,15 +529,22 @@ def OpenQuickFixList( focus = False, autoclose = False ):
 
 
 def ComputeFittingHeightForCurrentWindow():
+  YCM_MAX_HEIGHT = int( vim.eval( 'g:ycm_compute_height_max_size' ) )
   current_window = vim.current.window
   if not current_window.options[ 'wrap' ]:
-    return len( vim.current.buffer )
+    if YCM_MAX_HEIGHT > 0 :
+      return min( YCM_MAX_HEIGHT, len( vim.current.buffer ) )
+    else :
+      return len( vim.current.buffer )
 
   window_width = current_window.width
   fitting_height = 0
   for line in vim.current.buffer:
     fitting_height += len( line ) // window_width + 1
-  return fitting_height
+  if YCM_MAX_HEIGHT > 0 : 
+    return min( YCM_MAX_HEIGHT, fitting_height )
+  else:
+    return fitting_height
 
 
 def SetFittingHeightForCurrentWindow():
